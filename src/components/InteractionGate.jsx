@@ -169,6 +169,7 @@ function HeartbeatGate({ interaction, onUnlock }) {
   const glowOpacity  = useTransform(glowP, [0, 1], [0.2, 0.75]);
   const duration     = interaction.durationMs ?? 2800;
   const TICK         = 50;
+  const hasReveal    = Boolean(interaction.revealText);
 
   useEffect(() => () => clearInterval(intervalRef.current), []);
 
@@ -182,7 +183,8 @@ function HeartbeatGate({ interaction, onUnlock }) {
         clearInterval(intervalRef.current);
         unlockedRef.current = true;
         setUnlocked(true);
-        setTimeout(onUnlock, 700);
+        // Give extra time to read the reveal line when one is present.
+        setTimeout(onUnlock, hasReveal ? 2200 : 700);
       }
     }, TICK);
   };
@@ -264,6 +266,21 @@ function HeartbeatGate({ interaction, onUnlock }) {
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             {interaction.label ?? 'hold'}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      {/* Reveal line — fades in after hold completes */}
+      <AnimatePresence>
+        {unlocked && hasReveal && (
+          <motion.p
+            style={s.heartReveal}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.1, delay: 0.4, ease: 'easeOut' }}
+          >
+            {interaction.revealText}
           </motion.p>
         )}
       </AnimatePresence>
@@ -667,6 +684,17 @@ const s = {
     textTransform: 'uppercase',
     color:         '#4a4440',
     fontFamily:    'Inter, sans-serif',
+  },
+  heartReveal: {
+    margin:        '0.75rem 0 0 0',
+    maxWidth:      '260px',
+    fontSize:      '1.05rem',
+    fontFamily:    "'Cormorant Garamond', Georgia, serif",
+    fontStyle:     'italic',
+    color:         '#c8a8b0',
+    textAlign:     'center',
+    lineHeight:    1.75,
+    letterSpacing: '0.01em',
   },
 
   // choice

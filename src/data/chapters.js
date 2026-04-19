@@ -196,8 +196,9 @@ const chapters = [
       '#0e0709',
     ],
     interaction: {
-      type: "letter",
-      sealText: "for you, always",
+      type:       "heartbeat",
+      label:      "hold on to this",
+      durationMs: 2600,
       revealText: "Everything I am, I became with you beside me.",
     },
   },
