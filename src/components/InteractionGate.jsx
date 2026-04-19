@@ -381,18 +381,23 @@ function DragGate({ interaction, onUnlock }) {
 // ─── Letter ──────────────────────────────────────────────────────────────────
 // A sealed card that the user slides open to reveal a line inside.
 
-const LETTER_H  = 190;
-const LETTER_OPEN_THRESHOLD = LETTER_H * 0.55;
+const LETTER_H  = 220;
+const LETTER_OPEN_THRESHOLD = LETTER_H * 0.40;
 
 function LetterGate({ interaction, onUnlock }) {
-  const y      = useMotionValue(0);
+  const y        = useMotionValue(0);
   const [opened, setOpened] = useState(false);
+
+  const open = () => {
+    if (opened) return;
+    animate(y, -(LETTER_H + 40), { duration: 0.4, ease: 'easeOut' });
+    setOpened(true);
+    setTimeout(onUnlock, 1100);
+  };
 
   const handleDragEnd = () => {
     if (y.get() < -LETTER_OPEN_THRESHOLD) {
-      animate(y, -(LETTER_H + 30), { duration: 0.38, ease: 'easeOut' });
-      setOpened(true);
-      setTimeout(onUnlock, 1100);
+      open();
     } else {
       animate(y, 0, { type: 'spring', stiffness: 280, damping: 26 });
     }
@@ -412,20 +417,27 @@ function LetterGate({ interaction, onUnlock }) {
           </motion.p>
         </div>
 
-        {/* Seal overlay — drag this upward to open */}
+        {/* Seal overlay — drag up OR tap to open */}
         <motion.div
           drag="y"
-          dragConstraints={{ top: -(LETTER_H + 30), bottom: 0 }}
+          dragConstraints={{ top: -(LETTER_H + 40), bottom: 0 }}
           dragElastic={0.08}
           dragMomentum={false}
           style={{ ...s.letterSeal, y }}
           onDragEnd={handleDragEnd}
+          onTap={open}
         >
           <div style={s.sealCircle}>
             <span style={{ color: '#c8a060', fontSize: '0.8rem', lineHeight: 1 }}>♥</span>
           </div>
           <p style={s.sealText}>{interaction.sealText ?? 'for you, always'}</p>
-          <span style={s.openHint}>↑ slide to open</span>
+          <motion.span
+            style={s.openHint}
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            ↑ slide to open
+          </motion.span>
         </motion.div>
       </div>
     </div>
@@ -718,13 +730,14 @@ const s = {
 
   // letter
   letterWrap: {
-    position:     'relative',
-    width:        '100%',
-    maxWidth:     '300px',
-    height:       `${LETTER_H}px`,
-    borderRadius: '14px',
-    overflow:     'hidden',
-    border:       '1px solid rgba(212,168,83,0.15)',
+    position:    'relative',
+    width:       '100%',
+    maxWidth:    '300px',
+    height:      `${LETTER_H}px`,
+    borderRadius:'14px',
+    overflow:    'hidden',
+    border:      '1px solid rgba(212,168,83,0.15)',
+    touchAction: 'none',   // prevent iOS scroll from stealing the drag gesture
   },
   letterBase: {
     position:       'absolute',
@@ -778,14 +791,13 @@ const s = {
     fontFamily:    'Inter, sans-serif',
   },
   openHint: {
-    position:      'absolute',
-    bottom:        '14px',
     fontSize:      '0.62rem',
     letterSpacing: '0.14em',
     textTransform: 'uppercase',
-    color:         'rgba(212,168,83,0.28)',
+    color:         'rgba(212,168,83,0.35)',
     fontFamily:    'Inter, sans-serif',
     pointerEvents: 'none',
+    display:       'block',
   },
 
   // tiles
