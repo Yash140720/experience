@@ -228,7 +228,6 @@ export default function ChapterScreen({ chapter, onComplete, onBack }) {
 const s = {
   screen: {
     position:       'relative',
-    minHeight:      '100vh',
     minHeight:      '100dvh',
     display:        'flex',
     alignItems:     'center',

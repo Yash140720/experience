@@ -112,7 +112,6 @@ export default function ChapterHub({
 const s = {
   screen: {
     position:       'relative',
-    minHeight:      '100vh',
     minHeight:      '100dvh',
     display:        'flex',
     justifyContent: 'center',

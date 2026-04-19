@@ -39,7 +39,7 @@ export default function AnimatedText({ lines, onComplete, pacing = 'normal' }) {
     const delay    = visibleCount === 0 ? INITIAL_DELAY_MS : getInterval(prevLine, pacing);
     timerRef.current = setTimeout(() => setVisibleCount(c => c + 1), delay);
     return () => clearTimeout(timerRef.current);
-  }, [visibleCount, lines.length, pacing]);
+  }, [visibleCount, lines, pacing]);
 
   // Tap anywhere on the lines area to skip ahead one line immediately.
   const handleTap = useCallback(() => {
