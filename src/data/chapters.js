@@ -178,7 +178,7 @@ const chapters = [
     title: "Us Beyond Everything",
     lines: [
       "20 April was the day it became real in a different way.",
-      "Ferre. That night. The moment we stopped being almost.",
+      "Gurudwara. That night. The moment we stopped being almost.",
       "You've seen me unfinished — and stayed anyway.",
       "I don't take that lightly. I never will.",
     ],

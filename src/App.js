@@ -67,13 +67,18 @@ export default function App() {
   }, []);
 
   const handleChapterComplete = useCallback((id) => {
-    // Check before updating state: are all OTHER chapters already done?
-    // If so, this completion makes the experience fully complete.
+    // If the chapter was already completed, this is a replay — never re-trigger
+    // the final flow. Just return to the hub like a normal chapter exit.
+    if (isCompleted(id)) {
+      setTimeout(() => setScreen('hub'), 700);
+      return;
+    }
+
+    // Fresh first-time completion: check (before updating state) whether all
+    // other chapters are already done — if so, this is the final chapter.
     const willBeAllCompleted = chapters.every(c => c.id === id || isCompleted(c.id));
     completeChapter(id);
     if (willBeAllCompleted) {
-      // ChapterScreen's ending animation runs for ~2000ms before calling this.
-      // A short additional delay lets the zoom/dim linger before the cut to FinalReveal.
       setTimeout(() => setScreen('final'), 350);
     } else {
       setTimeout(() => setScreen('hub'), 700);
