@@ -52,7 +52,7 @@ export default function App() {
   const [activeChapterId, setActiveChapterId] = useState(null);
 
   const { isUnlocked, isCompleted, completeChapter, allCompleted } = useUnlockProgress();
-  const { start: startMusic, toggleMute, isMuted, isStarted } = useAudio(OUR_SONG);
+  const { start: startMusic, toggleMute, isMuted } = useAudio(OUR_SONG);
 
   const activeChapter = chapters.find(c => c.id === activeChapterId) ?? null;
 
@@ -129,8 +129,9 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Music toggle — rendered outside AnimatePresence so it persists across screens */}
-      {isStarted && (
+      {/* Music toggle — visible on all screens after intro.
+          If autoplay was blocked the user can tap this to start music manually. */}
+      {screen !== 'intro' && (
         <MusicToggle isMuted={isMuted} onToggle={toggleMute} />
       )}
     </>

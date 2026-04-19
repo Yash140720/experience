@@ -38,8 +38,17 @@ export function useAudio(src) {
 
   const toggleMute = useCallback(() => {
     const a = ensureAudio();
-    a.muted = !a.muted;
-    setIsMuted(a.muted);
+    if (a.paused) {
+      // Audio is paused — either autoplay was blocked or start() was never called.
+      // Use this user gesture to begin playback.
+      a.muted = false;
+      a.play().catch(() => {});
+      setIsStarted(true);
+      setIsMuted(false);
+    } else {
+      a.muted = !a.muted;
+      setIsMuted(a.muted);
+    }
   }, [ensureAudio]);
 
   return { start, toggleMute, isMuted, isStarted };
